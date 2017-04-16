@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-%matplotlib inline
+#%matplotlib inline
 
 def plotPoke(x):
     f, a = plt.subplots(2, 8, figsize=(13, 3))
@@ -21,11 +21,11 @@ def plotPoke(x):
 
 
 # Create an empty array to store pokemon pics
-orig_img = np.empty((0, 40, 40, 3), dtype='float32')
+orig_img = np.empty((0, 96, 96, 3), dtype='float32')
 # Load all images and append into orig_img
 path = os.path.abspath("./AE_RGB.ipynb")
 path = re.sub('[a-zA-Z\s._]+$', '', path)
-for pic in glob.glob(path+'Pokemon/*.png'):
+for pic in glob.glob(path+'data/*.png'):
     img = mpimg.imread(pic)
     # remove alpha channel  %some alpha=0 but RGB is not equal to [1., 1., 1.]
     img[img[:,:,3]==0] = np.ones((1,4))
@@ -37,7 +37,7 @@ print 'Input data shape: {}'.format(orig_img.shape)
 plotPoke(orig_img)
 
 
-# Parameters
+# Parameters may need to be adjusted
 learning_rate = 0.00005
 training_epochs = 50000
 batch_size = 33
@@ -45,7 +45,7 @@ display_step = 1000
 examples_to_show = 8
 
 # Network Parameters
-n_input = [40, 40, 3] # Pokemon data input (img shape: 40*40*3)
+n_input = [96, 96, 3] # Pokemon data input (img shape: 40*40*3)
 n_channel1 = 16
 n_channel2 = 32
 n_channel3 = 64
@@ -115,7 +115,7 @@ def generator(z):
     output_dim3 = tf.stack([tf.shape(z)[0], 20, 20, n_channel1])
     hidden_g3 = tf.nn.relu(deconv2d(hidden_g2, weights['gen_h3'], biases['gen_h3'], output_dim3))
 
-    output_dim4 = tf.stack([tf.shape(z)[0], 40, 40, 3])
+    output_dim4 = tf.stack([tf.shape(z)[0], 96, 96, 3])
     hidden_g4 = tf.nn.tanh(deconv2d(hidden_g3, weights['gen_h4'], biases['gen_h4'], output_dim4))
     return hidden_g4
 
